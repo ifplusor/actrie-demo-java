@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.5.0</version>
+		<relativePath/>
+		<!-- lookup parent from repository -->
+	</parent>
+
+	<groupId>psn.ifplusor</groupId>
+	<artifactId>actrie-demo</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+
+	<name>Actrie Demo</name>
+	<description>How to use actrie with Maven.</description>
+
+	<properties>
+		<java.version>11</java.version>
+		<maven.test.skip>true</maven.test.skip>
+		<maven.javadoc.skip>true</maven.javadoc.skip>
+		<nar-plugin.version>3.10.1</nar-plugin.version>
+		<actrie.version>3.0.9</actrie.version>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>psn.ifplusor</groupId>
+			<artifactId>actrie</artifactId>
+			<version>${actrie.version}</version>
+			<type>nar</type>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<mainClass>psn.ifplusor.actrie.Application</mainClass>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>com.github.maven-nar</groupId>
+				<artifactId>nar-maven-plugin</artifactId>
+				<version>${nar-plugin.version}</version>
+				<extensions>true</extensions>
+				<executions>
+					<execution>
+						<id>nar-download</id>
+						<phase>initialize</phase>
+						<goals>
+							<goal>nar-download</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>nar-unpack</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>nar-unpack</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<executions>
+					<execution>
+						<!-- Copy native library -->
+						<id>copy-resources</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.outputDirectory}</outputDirectory>
+							<resources>
+								<resource>
+									<directory>${project.build.directory}/nar/actrie-${actrie.version}-${nar.aol}-jni</directory>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+	<repositories>
+		<repository>
+			<id>github</id>
+			<name>GitHub OWNER Apache Maven Packages</name>
+			<url>https://maven.pkg.github.com/ifplusor/actrie</url>
+		</repository>
+	</repositories>
+
+</project>
